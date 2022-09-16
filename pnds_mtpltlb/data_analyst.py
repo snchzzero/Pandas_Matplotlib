@@ -60,6 +60,7 @@ def csv_data():
         print("csv_data успешно")
 
 def analyst_data():
+    csv_data()
     color = ['blue', 'indigo', 'purple', 'red', 'pink', 'orange', 'yellow', 'green', 'teal', 'cyan', 'gray']
 
     # Сброс ограничений на количество выводимых рядов
@@ -200,9 +201,9 @@ def google_API_send():
             "valueInputOption": "USER_ENTERED",
             # Данные воспринимаются, как вводимые пользователем (считается значение формул)
             "data": [
-                {"range": "A1:G1",
+                {"range": "A1:H1",
                  "majorDimension": "ROWS",  # Сначала заполнять строки, затем столбцы
-                 "values": [['area', 'cluster', 'cluster_name', 'keyword', 'x', 'y', 'color'],  # Заполняем первую строку
+                 "values": [['area', 'cluster', 'cluster_name', 'keyword', 'count', 'x', 'y', 'color'],  # Заполняем первую строку
                  ]}
             ]
         }).execute()
@@ -213,10 +214,10 @@ def google_API_send():
                 "valueInputOption": "USER_ENTERED",
                 # Данные воспринимаются, как вводимые пользователем (считается значение формул)
                 "data": [
-                    {"range": f"A{total}:G{total}",
+                    {"range": f"A{total}:H{total}",
                      "majorDimension": "ROWS",  # Сначала заполнять строки, затем столбцы
                      "values": [
-                         [f'{row[1]}', f'{row[2]}', f'{row[3]}', f'{row[4]}', f'{row[7]}', f'{row[8]}', f'{row[9]}'],  # Заполняем первую строку
+                         [f'{row[1]}', f'{row[2]}', f'{row[3]}', f'{row[4]}', f'{row[6]}', f'{row[7]}', f'{row[8]}', f'{row[9]}'],  # Заполняем первую строку
 
                      ]}
                 ]
@@ -230,11 +231,12 @@ def google_API_send():
     del_tab()
     tab_column_siz(0, 2, 80)
     tab_column_siz(3, 4, 300)
-    tab_column_siz(4, 6, 150)
-    tab_column_siz(6, 7, 80)
-    tab_text_format_main(0, 1, 0, 7, True, 10)
+    tab_column_siz(4, 5, 80)
+    tab_column_siz(5, 7, 150)
+    tab_column_siz(7, 8, 80)
+    tab_text_format_main(0, 1, 0, 8, True, 10)
     endRowIndex = tab_send_data()
-    tab_text_format_main(1, endRowIndex, 0, 7, False, 9)
+    tab_text_format_main(1, endRowIndex, 0, 8, False, 9)
 
 
 
@@ -243,5 +245,5 @@ def google_API_send():
 
 #csv_data()
 #analyst_data()
-google_API_send()
+#google_API_send()
 
