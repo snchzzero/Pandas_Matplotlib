@@ -259,8 +259,8 @@ python data_plot.py run
 [оглавление](#оглавление)
 
 ______
-![Screenshot](plot/ar.vr_1.png)
+![Screenshot](/script_run/plot/ar.vr_1.png)
 
-![Screenshot](/plot/available_1.png)
+![Screenshot](/script_run/plot/available_1.png)
 
-![Screenshot](capability_1.png)
+![Screenshot](/script_run/plot/capability_1.png)
