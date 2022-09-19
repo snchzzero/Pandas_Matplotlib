@@ -160,9 +160,71 @@ total = 2  # начинаем со второй строки
 <a name="Решение_Задания_№2"></a>
 ### Решение задания №2
 Для решения используются библиотеки: **pandas, matplotlib, seaborn**
-1. 
+1. Получаем значение строк по столбцу _area_:
+```shell
+area = sorted(list(set(data['area'].tolist())))  # set - чтобы не было повторов, list - чтобы применить сортировку по алфавиту
+```
+2. Через цикл _for_ формируем _data_area_ со всеми данными из таблицы по выбранной области _area_:
+```shell
+for ar in area:
+    data_area = data.loc[data['area'] == f'{ar}']
+    plot(data_area, ar.replace('\\', '.'), "_1")  # вызываем функцию plot
+```
+3. Вызываем функцию _plot(data=None, file_name="area", copy="")_ и создаем график рассеивания по выбранной области:
+```shell
+ plt.figure(figsize=(9, 7))  # размеры графика 1500х1500px
+    ax = sns.lmplot(
+               col="area",
+               hue="cluster",
+               x='x',  # Horizontal axis
+               y='y',  # Vertical axis
+               data=data,  # Data source
+               fit_reg=False,  # Don't fix a regression line
+               height = 15,
+               aspect = 1)  # size and dimension 2
+    sns.set(font_scale=1.1)   # размер надписей к осям
+    plt.title(f'{file_name}')
+    # Set x-axis label
+    plt.xlabel('x')
+    # Set y-axis label
+    plt.ylabel('y')
+```
+4. Для того, что бы каждая точка на графике рассеивания была подписана нашим словосочетанием из keyword и для форматирования расположения текста подписи точек (во избежании наложении текста друг на друга) внутри функции _plot()_ вызываем функцию  *label_point(data.x, data.y, data.keyword, plt.gca())*:
+```shell
+    def label_point(x, y, val, ax):  # добавляем к каждой точке текстовую метку
+        x_cord = list()  # лист х координат, что бы отслеживать близко лежащие точки
+        y_cord = list()  # лист y координат, что бы отслеживать близко лежащие точки
+        a = pd.concat({'x': x, 'y': y, 'val': val}, axis=1)  # формируем данные текущей области по колонкам: 'x', 'y', 'val'
 
+        for i, point in a.iterrows():   # перебираем кортеж со значениями по строке 
+            x_point = point['x']  # координата х
+            y_point = point['y']  # координата y
+            keyword_text = str(point['val'])  # текст над точкой из колонки ('keyword')
+            if len(keyword_text) > 15:  # если длина текста больше 15
+                keyword_text = "\n".join(keyword_text.split())  # разделяем каждое слово "\n"
+                y_point -= 0.5  # смещение по y координате
+            
+            # для избежания наложения текста подписи точек выполняем условия:
+            # если x координата лежит в диапазоне  x-0.7 >= x >= x+0.7 и 
+            # если y координата лежит в диапазоне  y-0.3 >= y >= y+0.3 и 
+            # если текст содержит (keyword_text) >= 1 символ переноса строки ('\n')
+            if (round(float(point['x']), 1) in x_cord and round(float(point['y']), 1) in y_cord):
+                if keyword_text.count('\n') >= 1:  # если слова с переносом
+                    x_point -= 1.1  # смещение по x координате
+                    y_point += 0.8  # смещение по y координате
+            # если выше условие не выполняется, то заносим в лист x_cord значение x_point с шагом 0.1 в диапазоне от -0.7 до +0.7
+            # тоже самое в лист y_cord значение y_point с шагом 0.1 в диапазоне от -0.3 до +0.3
+            else:
+                x_cord.extend([round(round(float(point['x']), 1) + (i / 10), 1) for i in range(-7, 8, 1)])
+                y_cord.extend([round(round(float(point['y']), 1) + (i / 10), 1) for i in range(-3, 4, 1)])
 
+            vv = ax.text(x_point + .1 ,  y_point, keyword_text)  # отображаем словосочетание keyword на графике
+
+```
+5. Сохраняем график рассеивания выбранной области в '.png"
+```shell
+ax.figure.savefig(f"plot/{file_name}{copy}.png")
+```
 
 
 [оглавление](#оглавление)
@@ -189,4 +251,9 @@ python data_plot.py run
 ...
 
 ```
+[Таблица с обработанными данными в Google Sheets](https://docs.google.com/spreadsheets/d/19WU-rV31bktdBMZR1RM-ODJuuHamwcKaplPAJ-LEItY/edit#gid=0)
+
+[Графики рассеивания доступны на Яндекс Диске](https://disk.yandex.ru/d/egxzcGJrNBtVNg)
+
+
 [оглавление](#оглавление)

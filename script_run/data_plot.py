@@ -26,9 +26,9 @@ def plot(data=None, file_name="area", copy=""):
     plt.ylabel('y')
 
 
-    def label_point(x, y, val, ax):  # добавляем к кажой точке текстовую метку
-        x_cord = list()  #словарь, что бы остлеживать близко лежащие точки по координатам
-        y_cord = list()
+    def label_point(x, y, val, ax):  # добавляем к каждой точке текстовую метку
+        x_cord = list()  # лист х координат, что бы отслеживать близко лежащие точки
+        y_cord = list()  # лист y координат, что бы отслеживать близко лежащие точки
         a = pd.concat({'x': x, 'y': y, 'val': val}, axis=1)
 
         for i, point in a.iterrows():
@@ -42,14 +42,12 @@ def plot(data=None, file_name="area", copy=""):
                 if keyword_text.count('\n') >= 1:  # если слова с переносом
                     x_point -= 1.1
                     y_point += 0.8
-
             else:
                 x_cord.extend([round(round(float(point['x']), 1) + (i / 10), 1) for i in range(-7, 8, 1)])
                 y_cord.extend([round(round(float(point['y']), 1) + (i / 10), 1) for i in range(-3, 4, 1)])
 
-
             vv = ax.text(x_point + .1 ,  y_point, keyword_text)  # rotation=45 если надо повернуть текст
-            #print(vv)
+
 
     label_point(data.x, data.y, data.keyword, plt.gca())
     ax.figure.savefig(f"plot/{file_name}{copy}.png")
