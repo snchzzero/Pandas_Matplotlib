@@ -5,6 +5,7 @@
 * [Задание №2](#Задание_№2)
 * [Решение Задания №2](#Решение_Задания_№2)
 * [Инструкция по запуску скрипта](#Инструкция_по_запуску_скрипта)
+* [Графики рассеяния](#Графики_рассеяния)
 
 <a name="Задание_№1"></a>
 ### Задание №1 — Работа с данными
@@ -259,8 +260,36 @@ python data_plot.py run
 [оглавление](#оглавление)
 
 ______
+<a name="Графики_рассеяния">**Графики рассеяния**</a>
+
 ![Screenshot](/script_run/plot/ar.vr_1.png)
 
 ![Screenshot](/script_run/plot/available_1.png)
 
 ![Screenshot](/script_run/plot/capability_1.png)
+
+![Screenshot](/script_run/plot/dialog_1.png)
+
+![Screenshot](/script_run/plot/eligibility_1.png)
+
+![Screenshot](/script_run/plot/except_1.png)
+
+![Screenshot](/script_run/plot/greetings_1.png)
+
+![Screenshot](/script_run/plot/housewives_1.png)
+
+![Screenshot](/script_run/plot/lithuania_1.png)
+
+![Screenshot](/script_run/plot/locator_1.png)
+
+![Screenshot](/script_run/plot/personnel_1.png)
+
+![Screenshot](/script_run/plot/protein_1.png)
+
+![Screenshot](/script_run/plot/twisted_1.png)
+
+![Screenshot](/script_run/plot/winner_1.png)
+
+![Screenshot](/script_run/plot/worlds_1.png)
+
+[оглавление](#оглавление)
