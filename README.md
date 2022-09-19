@@ -1,4 +1,10 @@
 # Тестовое задание Junior Data Analyst
+
+[ex1](#ex1)
+[Текст ссылки](#твоё_название)
+
+[Решение Задания №1](#Решение_Задания№1)
+
 ### Задание №1 — Работа с данными
 Входные данные для тестового задания можно найти [здесь](https://docs.google.com/spreadsheets/d/165sp-lWd1L4qWxggw25DJo_njOCvzdUjAd414NSE8co/edit?usp=sharing) (или [здесь](https://docs.google.com/spreadsheets/d/1SWZCf9MSjP1wNuphLEOH9bA23qbUIyt9/edit?usp=sharing&ouid=100308789753749109392&rtpof=true&sd=true), резервная ссылка).
 Ваша задача - подготовить и обработать исходные данных так, чтобы их можно было использовать во второй части задания.
@@ -29,4 +35,7 @@
 * data.table ( R )
 * pandas  (Python)
 
+## Решение Задания №1
+<a name="ex1">ex1</a>
 #### Решение:
+<a name="твоё_название"></a>
