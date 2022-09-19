@@ -74,7 +74,7 @@ def analyst_data():
     # удаляем повтор keyword в одной области area
     for row in data.itertuples():
         #print(row)  # вывести кортеж строки
-        if row[1] not in d1:  # если area нет в словаре, то добавляем его и его первый класер + цвет
+        if row[1] not in d1:  # если area нет в словаре, то добавляем его и его первый кластер + цвет
             col = random.choice(color)
             d1[row[1]] = {row[2]: col, 'keyword':[row[4]]}
             #print(sort_data['color'].iloc[row[0]])  # вывести значение цвета (столбец и индекс)
