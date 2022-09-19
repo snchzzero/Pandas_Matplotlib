@@ -63,7 +63,7 @@ data.insert(8, 'color', None)
 ```
 * Преобразовываем аргументы(string) (значения в колонке _'count'_) в числовую форму, для дальнейшей сортировки значений по _'count'_:
 ```shell
-data['count'] = pd.to_numeric(arg=data['count'], errors='coerce', downcast='integer') 
+data['count'] = pd.to_numeric(arg=data['count'], errors='ignore', downcast='unsigned') 
 ```
 * Объявляем словарь "_d1_", Для предварительной записи "color", "keyword", что бы избежать повторов:
 ```shell
@@ -72,7 +72,11 @@ d1 = dict()
 * Через цикл _for_ добавляем в колонку color цвет в соответствии с условием, удаляем повтор "keyword" в одной области area:
 ```shell
 for row in data.itertuples():  # получаем кортеж из строки по всем столбцам 
- # если область "area" (row[1]) нет в словаре, то добавляем его и его первый кластер (row[2]) + цвет (col)
+         # если значение count не число, то удаляем строку
+         if ((type(row[6]) == str and (row[6] == '-') or (row[6] == 'N\\A'))) or type(row[6]) == float:
+            data = data.drop(index=row[0])
+            continue    
+         # если область "area" (row[1]) нет в словаре, то добавляем его и его первый кластер (row[2]) + цвет (col)        
          if row[1] not in d1: 
             col = random.choice(color) # цвет выбираем из ранее созданного списка "color"
              # Добавляем в словарь: row[1] - область, row[2] - название кластера, row[4] - словосочетание
