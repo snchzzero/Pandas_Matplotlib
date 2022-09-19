@@ -6,16 +6,8 @@ from googleapiclient import discovery  # вместо apiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
 import csv
 import pandas as pd
-import json
 import time
 
-
-
-# для db_google_sheets
-import psycopg2
-from config import host, user, password, db_name
-import requests
-import xmltodict
 
 # функция чтения гугл таблицы
 def google_API_get():
