@@ -88,7 +88,47 @@ for row in data.itertuples():  # получаем кортеж из строки
             d1[row[1]]['keyword'].append(row[4])
             data.loc[row[0], 'color'] = col  # добавляем в колонку таблицы цвет
 ```
+* Сортировка по столбцам в порядке возрастания: 'area', 'cluster', 'cluster_name', в порядке убвания: 'count'
+```shell
+sort_data = data.sort_values(by=['area', 'cluster', 'cluster_name', 'count'],
+                                 ascending=[True, True, True, False])  # сортировка по столбцам
+```
+5. Удаляем, через функцию _"del_tab()"_ ранее занесенные данные в нашем новом документе Google Sheets:
+```shell
+rangeAll = '{0}!A1:Z'.format("Лист1")
+        body = {}
+        resultClear = service.spreadsheets().values().clear(spreadsheetId=spreadsheet_id, range=rangeAll,
+                                                            body=body).execute()
+```
+6. В новом документе Google Sheets меняем ширину столбцов и применяем форматирование текста, через функции:
+* tab_column_siz(startI, endI, size)
+* tab_text_format_main(startRowIndex=0, endRowIndex=0, startColumnIndex=0, endColumnIndex=0, bold=False, fontSize=10 )
 
+7. Вызываем функцию _"tab_send_data()"_ и начинаем процесс переноса обработанных и отсортированных данных:
+```shell
+total = 2  # начинаем со второй строки
+    for row in data.itertuples():  # получаем кортеж из строки по всем столбцам 
+        results = service.spreadsheets().values().batchUpdate(spreadsheetId=spreadsheet_id, body={
+            "valueInputOption": "USER_ENTERED",
+            # Данные воспринимаются, как вводимые пользователем (считается значение формул)
+            # row[1] - "area", row[2] - 'cluster', row[3] - 'cluster_name', row[4] - 'keyword',
+            # row[6] - 'count', row[7] - 'x', row[8] - 'y', row[9] - 'color'
+            "data": [
+                {"range": f"A{total}:H{total}",
+                 "majorDimension": "ROWS",  # Сначала заполнять строки, затем столбцы
+                 "values": [
+                     [f'{row[1]}', f'{row[2]}', f'{row[3]}', f'{row[4]}', f'{row[6]}', f'{row[7]}', f'{row[8]}', f'{row[9]}'],  # Заполняем строку
+
+                 ]}
+            ]
+        }).execute()
+        total += 1
+        
+        # API quota limitations из-за ограничения делаем паузу на 60сек после каждых 50 запросов
+        if total % 50 == 0:  
+            time.sleep(60)
+            continue
+```
 
 <a name="Задание_№2"></a>
 ### Задание №2 — Построение графиков
