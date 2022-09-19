@@ -1,4 +1,5 @@
 # Тестовое задание Junior Data Analyst
+<a name="оглавление"></a>
 * [Задание №1](#Задание_№1)
 * [Решение Задания №1](#Решение_Задания_№1)
 * [Задание №2](#Задание_№2)
@@ -36,8 +37,11 @@
 * data.table ( R )
 * pandas  (Python)
 
+[оглавление](#оглавление)
+
 <a name="Решение_Задания_№1"></a>
 ### Решение задания №1
+Для решения используются библиотеки: **pandas, httplib2, discovery, ServiceAccountCredentials, csv, time, datetime, random**
 1. Делаем себе [копию](https://docs.google.com/spreadsheets/d/18Pzfrg0VEoHBcZqB19Nl7SrcSZ4ivOnQgAQOfYCwe30/edit#gid=1439079331) Google Sheets, выдаем права на редактирование документа.
 2. Читаем данные из нашей копии Google Sheets, вызвав функцию _google_API_get()_
 ```shell
@@ -48,6 +52,10 @@
 ```
 3. Для удобного чтения полученных данных и дальнейшей обработки формируем файл "csv_data.csv", через функцию _csv_data()_
 4. Вызвав функцию _analyst_data()_ приступаем к анализу и обработке данных:
+* загрузка файла .csv в pandas DataFrame(двухмерная структура данных)
+```shell
+data = pd.read_csv('csv_data.csv', encoding="Windows-1251")  # encoding для чтения русских символов
+```
 * добавляем столбец color:
 ```shell
 data.insert(8, 'color', None)  
@@ -93,7 +101,7 @@ for row in data.itertuples():  # получаем кортеж из строки
 sort_data = data.sort_values(by=['area', 'cluster', 'cluster_name', 'count'],
                                  ascending=[True, True, True, False])  # сортировка по столбцам
 ```
-5. Удаляем, через функцию _"del_tab()"_ ранее занесенные данные в нашем новом документе Google Sheets:
+5. Удаляем, через функцию _del_tab()_ ранее занесенные данные в нашем новом документе Google Sheets:
 ```shell
 rangeAll = '{0}!A1:Z'.format("Лист1")
         body = {}
@@ -104,7 +112,7 @@ rangeAll = '{0}!A1:Z'.format("Лист1")
 * tab_column_siz(startI, endI, size)
 * tab_text_format_main(startRowIndex=0, endRowIndex=0, startColumnIndex=0, endColumnIndex=0, bold=False, fontSize=10 )
 
-7. Вызываем функцию _"tab_send_data()"_ и начинаем процесс переноса обработанных и отсортированных данных:
+7. Вызываем функцию _tab_send_data()_ и начинаем процесс переноса обработанных и отсортированных данных:
 ```shell
 total = 2  # начинаем со второй строки
     for row in data.itertuples():  # получаем кортеж из строки по всем столбцам 
@@ -129,7 +137,7 @@ total = 2  # начинаем со второй строки
             time.sleep(60)
             continue
 ```
-
+[оглавление](#оглавление)
 <a name="Задание_№2"></a>
 ### Задание №2 — Построение графиков
 На основании обработанных данных постройте по одной диаграмме рассеяния для каждой области (_area_) (пример внешнего вида см. в приложенном [svg-файле](https://drive.google.com/file/d/1uxxkyPipGoR4ZLluxV7S1acLZw3Y4VuS/view?usp=sharing)).
@@ -148,12 +156,18 @@ total = 2  # начинаем со второй строки
 * Matploptlib  (Python)
 * plotly (Python) и т.п.
 
-
+[оглавление](#оглавление)
 <a name="Решение_Задания_№2"></a>
 ### Решение задания №2
+Для решения используются библиотеки: **pandas, matplotlib, seaborn**
+1. 
 
 
-<a name="Инструкция_по_запуску_скрипта">Инструкция по запуску скрипта</a>
+
+
+[оглавление](#оглавление)
+
+<a name="Инструкция_по_запуску_скрипта">**Инструкция по запуску скрипта**</a>
 1. перейти в папку \Pandas_Matplotlib\script_run
 2. в терминале находясь в папке "script_run" ввести следующую команду:
 ```shell
@@ -175,3 +189,4 @@ python data_plot.py run
 ...
 
 ```
+[оглавление](#оглавление)
