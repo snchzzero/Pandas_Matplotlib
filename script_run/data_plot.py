@@ -5,7 +5,7 @@ from datetime import datetime
 from data_analyst import google_API_send, now
 
 
-
+#создаем график рассеяния
 def plot(data=None, file_name="area", copy=""):
 
     plt.figure(figsize=(9, 7))  #1500х1500px
@@ -58,7 +58,7 @@ area = sorted(list(set(data['area'].tolist())))  # получаем значен
 
 # plot(data.loc[data['area'] == 'available'], "available", "_1")
 
-print(f'[{now()}] Приступаем к созданию графиков')
+print(f'[{now()}] Приступаем к созданию графиков рассеяния')
 for ar in area:
     data_area = data.loc[data['area'] == f'{ar}']
     plot(data_area, ar.replace('\\', '.'), "_1")

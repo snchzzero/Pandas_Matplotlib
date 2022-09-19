@@ -11,7 +11,7 @@
 Входные данные для тестового задания можно найти [здесь](https://docs.google.com/spreadsheets/d/165sp-lWd1L4qWxggw25DJo_njOCvzdUjAd414NSE8co/edit?usp=sharing) (или [здесь](https://docs.google.com/spreadsheets/d/1SWZCf9MSjP1wNuphLEOH9bA23qbUIyt9/edit?usp=sharing&ouid=100308789753749109392&rtpof=true&sd=true), резервная ссылка).
 Ваша задача - подготовить и обработать исходные данных так, чтобы их можно было использовать во второй части задания.
 
-**Требования к выходным данным:**<
+**Требования к выходным данным:**
 1.     В выходной таблице должны остаться только следующие колонки:
 * _area, cluster, cluster_name, keyword, x, y, count, color_, где:
 *  _area_ - область,
@@ -170,7 +170,7 @@ for ar in area:
     data_area = data.loc[data['area'] == f'{ar}']
     plot(data_area, ar.replace('\\', '.'), "_1")  # вызываем функцию plot
 ```
-3. Вызываем функцию _plot(data=None, file_name="area", copy="")_ и создаем график рассеивания по выбранной области:
+3. Вызываем функцию _plot(data=None, file_name="area", copy="")_ и создаем график рассеяния по выбранной области:
 ```shell
  plt.figure(figsize=(9, 7))  # размеры графика 1500х1500px
     ax = sns.lmplot(
@@ -189,7 +189,7 @@ for ar in area:
     # Set y-axis label
     plt.ylabel('y')
 ```
-4. Для того, что бы каждая точка на графике рассеивания была подписана нашим словосочетанием из keyword и для форматирования расположения текста подписи точек (во избежании наложении текста друг на друга) внутри функции _plot()_ вызываем функцию  *label_point(data.x, data.y, data.keyword, plt.gca())*:
+4. Для того, что бы каждая точка на графике рассеяния была подписана нашим словосочетанием из keyword и для форматирования расположения текста подписи точек (во избежании наложении текста друг на друга) внутри функции _plot()_ вызываем функцию  *label_point(data.x, data.y, data.keyword, plt.gca())*:
 ```shell
     def label_point(x, y, val, ax):  # добавляем к каждой точке текстовую метку
         x_cord = list()  # лист х координат, что бы отслеживать близко лежащие точки
@@ -221,7 +221,7 @@ for ar in area:
             vv = ax.text(x_point + .1 ,  y_point, keyword_text)  # отображаем словосочетание keyword на графике
 
 ```
-5. Сохраняем график рассеивания выбранной области в '.png"
+5. Сохраняем график рассеяния выбранной области в '.png"
 ```shell
 ax.figure.savefig(f"plot/{file_name}{copy}.png")
 ```
@@ -253,7 +253,14 @@ python data_plot.py run
 ```
 [Таблица с обработанными данными в Google Sheets](https://docs.google.com/spreadsheets/d/19WU-rV31bktdBMZR1RM-ODJuuHamwcKaplPAJ-LEItY/edit#gid=0)
 
-[Графики рассеивания доступны на Яндекс Диске](https://disk.yandex.ru/d/egxzcGJrNBtVNg)
+[Графики рассеяния доступны на Яндекс Диске](https://disk.yandex.ru/d/egxzcGJrNBtVNg)
 
 
 [оглавление](#оглавление)
+
+______
+![Screenshot](plot/ar.vr_1.png)
+
+![Screenshot](/plot/available_1.png)
+
+![Screenshot](capability_1.png)
