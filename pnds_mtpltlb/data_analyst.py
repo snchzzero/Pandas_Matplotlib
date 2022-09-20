@@ -23,7 +23,8 @@ def google_API_get():
 
     # подключение API
 
-    CREDENTIALS_FILE = 'creds.json'  # файл с API
+    CREDENTIALS_FILE = 'pnds_mtpltlb/creds.json'  # файл с API
+    #CREDENTIALS_FILE = 'creds.json'  # файл с API
     spreadsheet_id = '18Pzfrg0VEoHBcZqB19Nl7SrcSZ4ivOnQgAQOfYCwe30'  # из url схемы таблицы гугл (Pandas_Matplotlib)
 
     # документы с которыми будем работать (читаем ключи из файла)
@@ -49,7 +50,8 @@ def google_API_get():
 
 # создание csv файла с прочтенных исходных данных из Google Sheets
 def csv_data():
-    with open('csv_data.csv', 'w') as f:
+    with open('pnds_mtpltlb/csv_data.csv', 'w') as f:
+    #with open('csv_data.csv', 'w') as f:
         writer = csv.writer(f)
         data = google_API_get()
         for row in data['values']:
@@ -69,7 +71,8 @@ def analyst_data():
     # Сброс ограничений на количество символов в записи
     pd.set_option('display.max_colwidth', None)
 
-    data = pd.read_csv('csv_data.csv', encoding="Windows-1251")  # encoding для чтения русских символов
+    data = pd.read_csv('pnds_mtpltlb/csv_data.csv', encoding="Windows-1251")  # encoding для чтения русских символов
+    #data = pd.read_csv('csv_data.csv', encoding="Windows-1251")  # encoding для чтения русских символов
     data.insert(8, 'color', None)  # добавляем столбец color
     d1 = dict()  # для предварительной записи color, keyword, что бы избежать повторов
     data['count'] = pd.to_numeric(arg=data['count'], errors='ignore', downcast='unsigned')  # преобразования аргумента(string) в числовую форму
@@ -278,28 +281,50 @@ def db_insert_data(from_name=None):
         data = analyst_data()
         for row in data.itertuples():
             try:
-
-                #if ((type(row[6]) == str and (row[6] == '-') or (row[6] == 'N\\A'))) or type(row[6]) == float:
-                    #continue
-
-
                 with connection.cursor() as cursor:
                     cursor.execute("""
                     INSERT INTO pnds_mtpltlb (area, cluster, cluster_name, keyword, count, x, y, color) VALUES
                     (%s, %s, %s, %s, %s, %s, %s, %s);""", [row[1], int(row[2]),
                                                row[3], row[4], row[6], row[7], row[8], row[9]])
+
             except Exception as _ex:
                 print(_ex)
-                print(row[6])
-                print(type(row[6]))
 
+        print(f'[{now()}] Проанализированные данные успешно занесены в БД PostgreSQL')
 
     except Exception as _ex:
         print(_ex)
 
+
     finally:
         # закрываем подключение к БД
         if connection:
+            connection.close()
+
+def selecet():
+    try:
+        connection = psycopg2.connect(
+            host=host,
+            user=user,
+            password=password,
+            database=db_name)
+        connection.autocommit = True  # что бы не писать после каждого запроса коммит
+
+        with connection.cursor() as cursor:
+            cursor.execute("""
+            SELECT id, area, cluster, cluster_name, keyword, count, x, y, color FROM pnds_mtpltlb""")
+            rows = cursor.fetchall()
+            for row in rows:
+                a = row
+                print(row)
+                for r in row:
+                    print(row[8])
+                    print(r)
+
+    except ValueError as ex:
+        print(ex)
+    finally:
+        if connection:  # закрываем подключение к БД
             connection.close()
 
 
@@ -307,4 +332,5 @@ def db_insert_data(from_name=None):
 #csv_data()
 #analyst_data()
 #google_API_send()
-db_insert_data()
+#db_insert_data()
+#selecet()

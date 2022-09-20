@@ -1,0 +1,67 @@
+{% extends 'pnds_mtpltlb/home.html' %} <!-- привязка ранее созданного шаблона -->
+{% load static %}
+
+{% block content %}
+
+    <div id="start"></div>
+    <div class="container justify-content-center">
+        <table class="table table-dark table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col" class="text-center">№</th>
+                    <th scope="col" class="text-center">area</th>
+                    <th scope="col" class="text-center">cluster</th>
+                    <th scope="col" class="text-center">cluster name</th>
+                    <th scope="col" class="text-center">keyword</th>
+                    <th scope="col" class="text-center">count</th>
+                    <th scope="col" class="text-center">x</th>
+                    <th scope="col" class="text-center">y</th>
+                    <th scope="col" class="text-center">color</th>
+                </tr>
+                <tbody>
+                    {% for row in rows %}
+                        <tr>
+<!--                            color = ['blue', 'indigo', 'purple', 'red', 'pink', 'orange', 'yellow', 'green', 'teal', 'cyan', 'gray']-->
+                            {% for td in row %}
+                                {% if row.8 == "blue" %}
+                                    <td class="text-center"><font color=#3770F5 >{{ td }}</font></td>
+                                {% elif row.8 == "indigo" %}
+                                    <td class="text-center"><font color=#AD3AF8 >{{ td }}</font></td>
+                                {% elif row.8 == "purple" %}
+                                    <td class="text-center"><font color="purple">{{ td }}</font></td>
+                                {% elif row.8 == "red" %}
+                                    <td class="text-center"><font color="red">{{ td }}</font></td>
+                                {% elif row.8 == "pink" %}
+                                    <td class="text-center"><font color="pink">{{ td }}</font></td>
+                                {% elif row.8 == "orange" %}
+                                    <td class="text-center"><font color="orange">{{ td }}</font></td>
+                                {% elif row.8 == "yellow" %}
+                                    <td class="text-center"><font color="yellow">{{ td }}</font></td>
+                                {% elif row.8 == "green" %}
+                                    <td class="text-center"><font color="green">{{ td }}</font></td>
+                                {% elif row.8 == "teal" %}
+                                    <td class="text-center"><font color="teal">{{ td }}</font></td>
+                                {% elif row.8 == "cyan" %}
+                                    <td class="text-center"><font color="cyan">{{ td }}</font></td>
+                                {% elif row.8 == "gray" %}
+                                    <td class="text-center"><font color="gray">{{ td }}</font></td>
+                                {% else %}
+                                    <td class="text-center">{{ td }}</td>
+                                {% endif %}
+
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </thead>
+        </table>
+    </div>
+
+    <!-- стрелка для прокрутки страницы вверх -->
+    <div class = "fixed-bottom" style="margin-right: 16px; margin-bottom: 24px;">
+        <div class= "d-flex justify-content-end">
+            <a href = "#start"> <img src = "{% static 'pnds_mtpltlb/up-arrow-svgrepo-com.svg' %}" title="вверх" width="50" height="50"> </a>
+        </div>
+    </div>
+
+{% endblock %}
