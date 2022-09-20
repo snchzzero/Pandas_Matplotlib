@@ -1,67 +1,157 @@
-{% extends 'pnds_mtpltlb/home.html' %} <!-- привязка ранее созданного шаблона -->
-{% load static %}
+{% load static %} <!-- загружаем папку статик -->
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-{% block content %}
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+        <link rel="icon" type="image/png" href="{% static 'pnds_mtpltlb/panda-svgrepo-com.svg' %}">
+        <title>Pandas&Matplotlib</title>
+    </head>
 
-    <div id="start"></div>
-    <div class="container justify-content-center">
-        <table class="table table-dark table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th scope="col" class="text-center">№</th>
-                    <th scope="col" class="text-center">area</th>
-                    <th scope="col" class="text-center">cluster</th>
-                    <th scope="col" class="text-center">cluster name</th>
-                    <th scope="col" class="text-center">keyword</th>
-                    <th scope="col" class="text-center">count</th>
-                    <th scope="col" class="text-center">x</th>
-                    <th scope="col" class="text-center">y</th>
-                    <th scope="col" class="text-center">color</th>
-                </tr>
-                <tbody>
-                    {% for row in rows %}
-                        <tr>
-<!--                            color = ['blue', 'indigo', 'purple', 'red', 'pink', 'orange', 'yellow', 'green', 'teal', 'cyan', 'gray']-->
-                            {% for td in row %}
-                                {% if row.8 == "blue" %}
-                                    <td class="text-center"><font color=#3770F5 >{{ td }}</font></td>
-                                {% elif row.8 == "indigo" %}
-                                    <td class="text-center"><font color=#AD3AF8 >{{ td }}</font></td>
-                                {% elif row.8 == "purple" %}
-                                    <td class="text-center"><font color="purple">{{ td }}</font></td>
-                                {% elif row.8 == "red" %}
-                                    <td class="text-center"><font color="red">{{ td }}</font></td>
-                                {% elif row.8 == "pink" %}
-                                    <td class="text-center"><font color="pink">{{ td }}</font></td>
-                                {% elif row.8 == "orange" %}
-                                    <td class="text-center"><font color="orange">{{ td }}</font></td>
-                                {% elif row.8 == "yellow" %}
-                                    <td class="text-center"><font color="yellow">{{ td }}</font></td>
-                                {% elif row.8 == "green" %}
-                                    <td class="text-center"><font color="green">{{ td }}</font></td>
-                                {% elif row.8 == "teal" %}
-                                    <td class="text-center"><font color="teal">{{ td }}</font></td>
-                                {% elif row.8 == "cyan" %}
-                                    <td class="text-center"><font color="cyan">{{ td }}</font></td>
-                                {% elif row.8 == "gray" %}
-                                    <td class="text-center"><font color="gray">{{ td }}</font></td>
-                                {% else %}
-                                    <td class="text-center">{{ td }}</td>
-                                {% endif %}
+    <body>
+        <div id="start"></div>
+        <div class="container">
+            <form class="col" method="POST" action="{% url 'show_web_tab' %}">
+                <br>
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-lg align-self-center">
+                        <button class="btn btn-primary"
+                                type="submit"
+                                name="Analysis_Model"
+                                id="Analysis_Model"
+                                value="analysis">импорт и анализ данных
+                        </button>
+                    </div>
+                    <div class="col align-self-center">
+                        <button class="btn btn-primary"
+                                type="submit"
+                                name="ShowWebTab_Model"
+                                id="ShowWebTab_Model"
+                                value="show_web_tab">показать веб-таблицу
+                        </button>
+                    </div>
+                    <div class="col align-self-center">
+                        <button class="btn btn-success"
+                                type="submit"
+                                name="SendDateGS_Model"
+                                id="SendDateGS_Model"
+                                value="send_data">отправить данные в Google Sheets
+                        </button>
+                    </div>
 
-                            {% endfor %}
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </thead>
-        </table>
-    </div>
+                    <div class="col align-self-center">
+                        <button class="btn btn-outline-secondary"
+                                type="submit"
+                                name="CreatePlot_Model"
+                                id="CreatePlot_Model"
+                                value="create_plot">создать графики рассеяния
+                        </button>
+                    </div>
+                    <div class="col-lg-1 align-self-center">
+                        <button class="btn btn-outline-secondary"
+                                type="submit"
+                                name="ShowPlot_Model"
+                                id="ShowPlot_Model"
+                                value="show_plot">показать графики
+                        </button>
+                    </div>
 
-    <!-- стрелка для прокрутки страницы вверх -->
-    <div class = "fixed-bottom" style="margin-right: 16px; margin-bottom: 24px;">
-        <div class= "d-flex justify-content-end">
-            <a href = "#start"> <img src = "{% static 'pnds_mtpltlb/up-arrow-svgrepo-com.svg' %}" title="вверх" width="50" height="50"> </a>
+                    <div class="col-lg-4 align-self-center">
+                        <b> Статус: {{ now }}
+                            <font color="green">{{ name }}</font>
+                            {% if name == "данные успешно отправлены в Google Sheets" %}
+                                <a class ="nav-link"
+                                   href="https://docs.google.com/spreadsheets/d/19WU-rV31bktdBMZR1RM-ODJuuHamwcKaplPAJ-LEItY/edit#gid=0"
+                                   target="_blank">
+                                    <font color="blue">Перейти к таблице в Google Sheets </font></a>
+                            {% endif %}
+                        <b>
+
+
+                    </div>
+
+                </div>
+            </form>
         </div>
-    </div>
 
-{% endblock %}
+
+            <br>
+            <br>
+
+
+
+        <div class="container justify-content-center">
+            <table class="table table-dark table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col" class="text-center">№</th>
+                        <th scope="col" class="text-center">area</th>
+                        <th scope="col" class="text-center">cluster</th>
+                        <th scope="col" class="text-center">cluster name</th>
+                        <th scope="col" class="text-center">keyword</th>
+                        <th scope="col" class="text-center">count</th>
+                        <th scope="col" class="text-center">x</th>
+                        <th scope="col" class="text-center">y</th>
+                        <th scope="col" class="text-center">color</th>
+                    </tr>
+                    <tbody>
+                        {% for row in rows %}
+                            <tr>
+    <!--                            color = ['blue', 'indigo', 'purple', 'red', 'pink', 'orange', 'yellow', 'green', 'teal', 'cyan', 'gray']-->
+                                {% for td in row %}
+                                    {% if row.8 == "blue" %}
+                                        <td class="text-center"><font color=#3770F5 >{{ td }}</font></td>
+                                    {% elif row.8 == "indigo" %}
+                                        <td class="text-center"><font color=#AD3AF8 >{{ td }}</font></td>
+                                    {% elif row.8 == "purple" %}
+                                        <td class="text-center"><font color="purple">{{ td }}</font></td>
+                                    {% elif row.8 == "red" %}
+                                        <td class="text-center"><font color="red">{{ td }}</font></td>
+                                    {% elif row.8 == "pink" %}
+                                        <td class="text-center"><font color="pink">{{ td }}</font></td>
+                                    {% elif row.8 == "orange" %}
+                                        <td class="text-center"><font color="orange">{{ td }}</font></td>
+                                    {% elif row.8 == "yellow" %}
+                                        <td class="text-center"><font color="yellow">{{ td }}</font></td>
+                                    {% elif row.8 == "green" %}
+                                        <td class="text-center"><font color="green">{{ td }}</font></td>
+                                    {% elif row.8 == "teal" %}
+                                        <td class="text-center"><font color="teal">{{ td }}</font></td>
+                                    {% elif row.8 == "cyan" %}
+                                        <td class="text-center"><font color="cyan">{{ td }}</font></td>
+                                    {% elif row.8 == "gray" %}
+                                        <td class="text-center"><font color="gray">{{ td }}</font></td>
+                                    {% else %}
+                                        <td class="text-center">{{ td }}</td>
+                                    {% endif %}
+
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </thead>
+            </table>
+        </div>
+
+        <!-- стрелка для прокрутки страницы вверх -->
+        <div class = "fixed-bottom" style="margin-right: 16px; margin-bottom: 24px;">
+            <div class= "d-flex justify-content-end">
+                <a href = "#start"> <img src = "{% static 'pnds_mtpltlb/up-arrow-svgrepo-com.svg' %}" title="вверх" width="50" height="50"> </a>
+            </div>
+        </div>
+
+        <br>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+
+
+</html>

@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect
 from pnds_mtpltlb.forms import Form_Action
 from datetime import datetime
 import psycopg2
-from pnds_mtpltlb.data_analyst import db_insert_data
+from pnds_mtpltlb.data_analyst import db_insert_data, google_API_send
 from pnds_mtpltlb.config_db import host, user, password, db_name
+from pnds_mtpltlb.data_plot import build_plot
 
 global name
 name = 'home'
@@ -50,6 +51,7 @@ def analysis(request):
     return render(request, 'pnds_mtpltlb/home.html', {'form': Form_Action(), 'name': name, 'now': time()})
 
 def show_web_tab(request):
+    global rows
     if request.method == 'GET':
         name = "web таблица успешно загружена"
         try:
@@ -72,7 +74,41 @@ def show_web_tab(request):
         finally:
             if connection:  # закрываем подключение к БД
                 connection.close()
+    elif request.method == 'POST':
+        form = Form_Action(request.POST)
+        if form.is_valid():
+            analysis_f = form.cleaned_data.get("Analysis_Model")
+            show_web_tab_f = form.cleaned_data.get("ShowWebTab_Model")
+            send_data_gs_f = form.cleaned_data.get("SendDateGS_Model")
+            create_plot_f = form.cleaned_data.get("CreatePlot_Model")
+            show_plot_f = form.cleaned_data.get("ShowPlot_Model")
+        else:
+            analysis_f = ("NO_analysis")
+            show_web_tab_f = ("NO_show_web_tab")
+            send_data_gs_f = ("NO_send_data_gs")
+            create_plot_f = ("NO_create_plot")
+            show_plot_f = ("NO_show_plot")
 
+        if analysis_f == "analysis":
+            db_insert_data()
+            name = "импорт входных данных Google Sheets, анализ данных - завершен"
+            return render(request, 'pnds_mtpltlb/web_tab.html', {'form': Form_Action(), 'name': name, 'now': time(), 'rows': rows})
+        elif show_web_tab_f == "show_web_tab":
+            return redirect('show_web_tab')
+        elif send_data_gs_f == "send_data":
+            google_API_send()
+            name = 'данные успешно отправлены в Google Sheets'
+            return render(request, 'pnds_mtpltlb/web_tab.html',
+                          {'form': Form_Action(), 'name': name, 'now': time(), 'rows': rows})
+        elif create_plot_f == "create_plot":
+            build_plot()
+            name = 'графики рассеяния успешно созданы'
+            return render(request, 'pnds_mtpltlb/web_tab.html',
+                          {'form': Form_Action(), 'name': name, 'now': time(), 'rows': rows})
+        elif show_plot_f == "show_plot":
+            return redirect('show_plot')
+        else:
+            return render(request, 'pnds_mtpltlb/home.html', {'form': Form_Action(), 'now': time(), 'name': name})
 
 def send_data(request):
     pass

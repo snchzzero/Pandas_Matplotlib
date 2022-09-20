@@ -11,7 +11,7 @@ from datetime import datetime
 import psycopg2
 from pnds_mtpltlb.config_db import host, user, password, db_name
 
-
+global DT
 
 def now():
     return datetime.now().strftime("%d.%m.%Y %H:%M:%S")
@@ -116,6 +116,8 @@ def analyst_data():
     #     print(row)
 
     print(f'[{now()}] Анализ данных, сортировка данных, добавление "color" - успешно завершено')
+    global DT
+    DT =sort_data
     return sort_data
 
 # отправляем отсортированные данные DataFrame в новый Google Sheets
@@ -128,7 +130,7 @@ def google_API_send():
 
     # подключение API
 
-    CREDENTIALS_FILE = 'creds.json'  # файл с API
+    CREDENTIALS_FILE = 'pnds_mtpltlb/creds.json'  # файл с API
     spreadsheet_id = '19WU-rV31bktdBMZR1RM-ODJuuHamwcKaplPAJ-LEItY'  # из url схемы таблицы гугл (Pandas_Matplotlib)
 
     # документы с которыми будем работать (читаем ключи из файла)
@@ -193,7 +195,8 @@ def google_API_send():
 
     # переноса данных в Google Sheets
     def tab_send_data():
-        data = analyst_data()
+        data = DT
+        #data = analyst_data()
 
         print(f'[{now()}] Начат процесс переноса данных в новый Google Sheets')
 
@@ -300,6 +303,9 @@ def db_insert_data(from_name=None):
         # закрываем подключение к БД
         if connection:
             connection.close()
+
+def get_data():
+    return DT
 
 def selecet():
     try:

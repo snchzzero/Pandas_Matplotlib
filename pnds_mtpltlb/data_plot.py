@@ -1,7 +1,7 @@
 import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
-from data_analyst import analyst_data
+from pnds_mtpltlb.data_analyst import get_data
 
 
 
@@ -51,16 +51,17 @@ def plot(data=None, file_name="area", copy=""):
             #print(vv)
 
     label_point(data.x, data.y, data.keyword, plt.gca())
-    ax.figure.savefig(f"plot/{file_name}{copy}.png")
+    ax.figure.savefig(f"pnds_mtpltlb/plot/{file_name}{copy}.png")
 
 
-data = analyst_data()
-area = sorted(list(set(data['area'].tolist())))  # получаем значение строк по столбцу area, set - чтобы небыло повторов, list - чтобы применить сортировку по алфавиту
 
-# plot(data.loc[data['area'] == 'available'], "available", "_1")
-for ar in area:
-    data_area = data.loc[data['area'] == f'{ar}']
-    plot(data_area, ar.replace('\\', '.'), "_1")
 
-if __name__ == '__data_plot__':
-    plot()
+def build_plot():
+    data = get_data()
+    area = sorted(list(set(data[
+                               'area'].tolist())))  # получаем значение строк по столбцу area, set - чтобы небыло повторов, list - чтобы применить сортировку по алфавиту
+
+    # plot(data.loc[data['area'] == 'available'], "available", "_1")
+    for ar in area:
+        data_area = data.loc[data['area'] == f'{ar}']
+        plot(data_area, ar.replace('\\', '.'), "_1")
