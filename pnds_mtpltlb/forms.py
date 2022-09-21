@@ -10,4 +10,4 @@ class Form_Sort(ModelForm):
     class Meta:
         model = ModelSort
         fields = ['sorts_1_Model', 'ASC_DESC_1_Model', 'sorts_2_Model', 'ASC_DESC_2_Model', 'sorts_3_Model',
-                  'ASC_DESC_3_Model', 'sorts_4_Model', 'ASC_DESC_4_Model']
+                  'ASC_DESC_3_Model', 'sorts_4_Model', 'ASC_DESC_4_Model', 'Sort_Default_Model']

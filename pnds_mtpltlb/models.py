@@ -18,3 +18,4 @@ class ModelSort(models.Model):
     ASC_DESC_3_Model = models.CharField(max_length=30, default="ASC")
     sorts_4_Model = models.CharField(max_length=30, default="count")
     ASC_DESC_4_Model = models.CharField(max_length=30, default="DESC")
+    Sort_Default_Model = models.CharField(max_length=30, default="novalue", blank=True)  # сортировка по умолчанию

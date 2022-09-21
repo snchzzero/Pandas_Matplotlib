@@ -137,6 +137,7 @@ def google_API_send():
 
     # подключение API
 
+    #CREDENTIALS_FILE = 'creds.json'  # файл с API
     CREDENTIALS_FILE = 'pnds_mtpltlb/creds.json'  # файл с API
     spreadsheet_id = '19WU-rV31bktdBMZR1RM-ODJuuHamwcKaplPAJ-LEItY'  # из url схемы таблицы гугл (Pandas_Matplotlib)
 

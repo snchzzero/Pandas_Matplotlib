@@ -63,12 +63,26 @@
 
                     <div class="col-lg-4 align-self-center">
                         <b> Статус: {{ now }}
-                            <font color="green">{{ name }}</font>
-                            {% if name == "данные успешно отправлены в Google Sheets" %}
+                            {% if name == "у вас нет графиков" %}
+                                <font color="red">{{ name }}</font>
+                            {% elif name == "name 'DT' is not defined" %}
+                                <font color="red">сначала импортируйте данные и проведите анализ</font>
+                            {% elif name == "данные успешно отправлены в Google Sheets" %}
+                                <font color="green">{{ name }}</font>
                                 <a class ="nav-link"
                                    href="https://docs.google.com/spreadsheets/d/19WU-rV31bktdBMZR1RM-ODJuuHamwcKaplPAJ-LEItY/edit#gid=0"
                                    target="_blank">
                                     <font color="blue">Перейти к таблице в Google Sheets </font></a>
+                            {% elif  name == "импорт входных данных Google Sheets, анализ данных - завершен" %}
+                                <font color="green">{{ name }}</font>
+                            {% elif  name == "графики рассеяния успешно созданы" %}
+                                <font color="green">{{ name }}</font>
+                            {% elif  name == "show plot" or name == "применена сортировка по умолчанию" or name == "применена сортировка пользователя" %}
+                                <font color="green">{{ name }}</font>
+                            {% elif  name == "web таблица успешно загружена" or name == "home" %}
+                                <font color="green">{{ name }}</font>
+                            {% else %}
+                                <font color="red">{{ name }}</font>
                             {% endif %}
                         <b>
                     </div>
