@@ -51,7 +51,7 @@ def plot(data=None, file_name="area", copy=""):
             #print(vv)
 
     label_point(data.x, data.y, data.keyword, plt.gca())
-    ax.figure.savefig(f"pnds_mtpltlb/plot/{file_name}{copy}.png")
+    ax.figure.savefig(f"pnds_mtpltlb/static/plot/{file_name}{copy}.png")
 
 
 
@@ -64,4 +64,4 @@ def build_plot():
     # plot(data.loc[data['area'] == 'available'], "available", "_1")
     for ar in area:
         data_area = data.loc[data['area'] == f'{ar}']
-        plot(data_area, ar.replace('\\', '.'), "_1")
+        plot(data_area, ar.replace('\\', '.'), "")

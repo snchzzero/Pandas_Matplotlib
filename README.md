@@ -63,7 +63,7 @@ data.insert(8, 'color', None)
 ```
 * Преобразовываем аргументы(string) (значения в колонке _'count'_) в числовую форму, для дальнейшей сортировки значений по _'count'_:
 ```shell
-data['count'] = pd.to_numeric(arg=data['count'], errors='ignore', downcast='unsigned') 
+    data['count'] = pd.to_numeric(arg=data['count'], errors='coerce', downcast='integer')
 ```
 * Объявляем словарь "_d1_", Для предварительной записи "color", "keyword", что бы избежать повторов:
 ```shell
@@ -73,7 +73,7 @@ d1 = dict()
 ```shell
 for row in data.itertuples():  # получаем кортеж из строки по всем столбцам 
          # если значение count не число, то удаляем строку
-         if ((type(row[6]) == str and (row[6] == '-') or (row[6] == 'N\\A'))) or type(row[6]) == float:
+         if ((type(row[6]) == str and (row[6] == '-') or (row[6] == 'N\\A') or (math.isnan(row[6])))):  # isnan проверяет, что бы count != nan
             data = data.drop(index=row[0])
             continue    
          # если область "area" (row[1]) нет в словаре, то добавляем его и его первый кластер (row[2]) + цвет (col)        

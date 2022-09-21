@@ -9,6 +9,7 @@ import pandas as pd
 import time
 from datetime import datetime
 import psycopg2
+import math
 from pnds_mtpltlb.config_db import host, user, password, db_name
 
 global DT
@@ -75,18 +76,18 @@ def analyst_data():
     #data = pd.read_csv('csv_data.csv', encoding="Windows-1251")  # encoding для чтения русских символов
     data.insert(8, 'color', None)  # добавляем столбец color
     d1 = dict()  # для предварительной записи color, keyword, что бы избежать повторов
-    data['count'] = pd.to_numeric(arg=data['count'], errors='ignore', downcast='unsigned')  # преобразования аргумента(string) в числовую форму
+    data['count'] = pd.to_numeric(arg=data['count'], errors='coerce', downcast='integer')  # преобразования аргумента(string) в числовую форму
 
     # добавляем в колонку color цвет в соответствии с условием
     # удаляем повтор keyword в одной области area
     for row in data.itertuples():  # вывести кортеж строки row
         # если значение count не число, то удаляем строку
-        if ((type(row[6]) == str and (row[6] == '-') or (row[6] == 'N\\A'))) or type(row[6]) == float:
+        if ((type(row[6]) == str and (row[6] == '-') or (row[6] == 'N\\A') or (math.isnan(row[6])))):  # isnan проверяет, что бы count != nan
             data = data.drop(index=row[0])
             continue
         elif row[1] not in d1:  # если area нет в словаре, то добавляем его и его первый кластер + цвет
             col = random.choice(color)
-            d1[row[1]] = {row[2]: col, 'keyword':[row[4]]}
+            d1[row[1]] = {row[2]: col, 'keyword': [row[4]]}
             #print(sort_data['color'].iloc[row[0]])  # вывести значение цвета (столбец и индекс)
             data.loc[row[0], 'color'] = col
 
@@ -108,17 +109,23 @@ def analyst_data():
             data.loc[row[0], 'color'] = col
             #print(data.iloc[row[0]])  # получить значение из строки
 
-    sort_data = data.sort_values(by=['area', 'cluster', 'cluster_name', 'count'],
-                                 ascending=[True, True, True, False])  # сортировка по столбцам
+    # sort_data = data.sort_values(by=['area', 'cluster', 'cluster_name', 'count'],
+    #                              ascending=[True, True, True, False])  # сортировка по столбцам
+
     # sort_data = data.sort_values(by=['keyword', 'count'],
     #                              ascending=[True, False])  # сортировка по столбцам (проверка на дублирующие слова)
+    # sort_data = data.sort_values(by=['count'],
+    #                              ascending=[True])  # сортировка по столбцам (проверка на дублирующие слова)
     # for row in sort_data.itertuples():
     #     print(row)
+    #     print(type(row[6]))
+
 
     print(f'[{now()}] Анализ данных, сортировка данных, добавление "color" - успешно завершено')
     global DT
-    DT =sort_data
-    return sort_data
+    DT = data
+    DT = sort_tab()
+    return DT
 
 # отправляем отсортированные данные DataFrame в новый Google Sheets
 def google_API_send():
@@ -250,6 +257,12 @@ def google_API_send():
 
     return data
 
+def sort_tab(column_1='area', column_2='cluster', column_3='cluster_name', column_4='count',
+             asc_1=True, asc_2=True, asc_3=True, asc_4=False):
+    global DT
+    DT = DT.sort_values(by=[column_1, column_2, column_3, column_4],
+                                 ascending=[asc_1, asc_2, asc_3, asc_4])
+    return DT
 
 def db_insert_data(from_name=None):
     try:
@@ -281,7 +294,8 @@ def db_insert_data(from_name=None):
              y double precision,
              color varchar);""")
 
-        data = analyst_data()
+        #data = analyst_data()
+        data = DT
         for row in data.itertuples():
             try:
                 with connection.cursor() as cursor:
@@ -340,3 +354,10 @@ def selecet():
 #google_API_send()
 #db_insert_data()
 #selecet()
+
+# analyst_data()
+# sort_tab(column_1='count', column_2='area',
+#          column_3='cluster_name', column_4='cluster',
+#          asc_1=True, asc_2=True, asc_3=True,
+#          asc_4=True)
+# db_insert_data()

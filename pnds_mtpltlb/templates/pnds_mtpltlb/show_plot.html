@@ -15,7 +15,7 @@
     <body>
         <div id="start"></div>
         <div class="container">
-            <form class="col" method="POST" action="{% url 'gohome' %}">
+            <form class="col" method="POST" action="{% url 'show_plot' %}">
                 <br>
                 {% csrf_token %}
                 <div class="row">
@@ -63,30 +63,87 @@
 
                     <div class="col-lg-4 align-self-center">
                         <b> Статус: {{ now }}
-                            <font color="green">{{ name }}</font>
-                            {% if name == "данные успешно отправлены в Google Sheets" %}
+                            {% if name == "у вас нет графиков" %}
+                                <font color="red">{{ name }}</font>
+                            {% elif name == "данные успешно отправлены в Google Sheets" %}
                                 <a class ="nav-link"
                                    href="https://docs.google.com/spreadsheets/d/19WU-rV31bktdBMZR1RM-ODJuuHamwcKaplPAJ-LEItY/edit#gid=0"
                                    target="_blank">
                                     <font color="blue">Перейти к таблице в Google Sheets </font></a>
+                            {% else %}
+                                <font color="green">{{ name }}</font>
                             {% endif %}
                         <b>
                     </div>
+
+                </div>
+            </form>
+
+
+
+            <br>
+            <br>
+
+            {% if name == "show plot" %}
+
+                <div class="row justify-content-center">
+                    <div class="d-flex align-self-end">
+                        <img src="{% static 'plot/ar.vr.png' %}" class="img-fluid">
+                    </div>
+                    <div class="d-flex align-self-end">
+                        <img src="{% static 'plot/available.png' %}" class="img-fluid">
+                    </div>
+                    <div class="d-flex align-self-end">
+                        <img src="{% static 'plot/capability.png' %}" class="img-fluid">
+                    </div>
+                    <div class="d-flex align-self-end">
+                        <img src="{% static 'plot/dialog.png' %}" class="img-fluid">
+                    </div>
+                    <div class="d-flex align-self-end">
+                        <img src="{% static 'plot/eligibility.png' %}" class="img-fluid">
+                    </div>
+                    <div class="d-flex align-self-end">
+                        <img src="{% static 'plot/except.png' %}" class="img-fluid">
+                    </div>
+                    <div class="d-flex align-self-end">
+                        <img src="{% static 'plot/greetings.png' %}" class="img-fluid">
+                    </div>
+                    <div class="d-flex align-self-end">
+                        <img src="{% static 'plot/housewives.png' %}" class="img-fluid">
+                    </div>
+                    <div class="d-flex align-self-end">
+                        <img src="{% static 'plot/lithuania.png' %}" class="img-fluid">
+                    </div>
+                    <div class="d-flex align-self-end">
+                        <img src="{% static 'plot/locator.png' %}" class="img-fluid">
+                    </div>
+                    <div class="d-flex align-self-end">
+                        <img src="{% static 'plot/personnel.png' %}" class="img-fluid">
+                    </div>
+                    <div class="d-flex align-self-end">
+                        <img src="{% static 'plot/protein.png' %}" class="img-fluid">
+                    </div>
+                    <div class="d-flex align-self-end">
+                        <img src="{% static 'plot/twisted.png' %}" class="img-fluid">
+                    </div>
+                    <div class="d-flex align-self-end">
+                        <img src="{% static 'plot/winner.png' %}" class="img-fluid">
+                    </div>
+                    <div class="d-flex align-self-end">
+                        <img src="{% static 'plot/worlds.png' %}" class="img-fluid">
+                    </div>
+
+                    <!-- стрелка для прокрутки страницы вверх -->
+                    <div class = "fixed-bottom" style="margin-right: 16px; margin-bottom: 24px;">
+                        <div class= "d-flex justify-content-end">
+                            <a href = "#start"> <img src = "{% static 'pnds_mtpltlb/up-arrow-svgrepo-com.svg' %}" title="вверх" width="50" height="50"> </a>
+                        </div>
+                    </div>
+
                 </div>
 
-            </div>
-
-
-            </form>
+            {% endif %}
         </div>
-
-
-            <br>
-            <br>
-        <div class="container">
-            {% block content %} {% endblock %}
-        </div>
-
         <br>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>

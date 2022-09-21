@@ -70,11 +70,124 @@
                                     <font color="blue">Перейти к таблице в Google Sheets </font></a>
                             {% endif %}
                         <b>
+                    </div>
+                </div>
+<!--                ['area', 'cluster', 'cluster_name', 'keyword', 'count', 'x', 'y', 'color']-->
+                <br>
+                <div class="row">
+                    <div class="col-lg-2 text-center">  <label><b>Сортировать по:</b></label>
+                    </div>
+                </div>
 
+                <div class="row">
+                    <div class="col-lg-2 text-center">
+<!--                        {% csrf_token %}-->
+                        <select class="form-control form-control" name="sorts_1_Model"
+                                id="sorts_1_Model">
+                            <option class="text-center fw-bold">{{ sorts_1_f }}</option>
+                            <option class="text-center">area</option>
+                            <option class="text-center">cluster</option>
+                            <option class="text-center">cluster name</option>
+                            <option class="text-center">keyword</option>
+                            <option class="text-center">count</option>
+                            <option class="text-center">x</option>
+                            <option class="text-center">y</option>
+                            <option class="text-center">color</option>
+                        </select>
+                    </div>
 
+                    <div class="col-lg-2 text-center">
+                        <select class="form-control form-control" name="sorts_2_Model"
+                                id="sorts_2_Model">
+                            <option class="text-center fw-bold">{{ sorts_2_f }}</option>
+                            <option class="text-center">area</option>
+                            <option class="text-center">cluster</option>
+                            <option class="text-center">cluster name</option>
+                            <option class="text-center">keyword</option>
+                            <option class="text-center">count</option>
+                            <option class="text-center">x</option>
+                            <option class="text-center">y</option>
+                            <option class="text-center">color</option>
+                        </select>
+                    </div>
+
+                    <div class="col-lg-2 text-center">
+                        <select class="form-control form-control" name="sorts_3_Model"
+                                id="sorts_3_Model">
+                            <option class="text-center fw-bold">{{ sorts_3_f }}</option>
+                            <option class="text-center">area</option>
+                            <option class="text-center">cluster</option>
+                            <option class="text-center">cluster name</option>
+                            <option class="text-center">keyword</option>
+                            <option class="text-center">count</option>
+                            <option class="text-center">x</option>
+                            <option class="text-center">y</option>
+                            <option class="text-center">color</option>
+                        </select>
+                    </div>
+
+                    <div class="col-lg-2 text-center">
+                        <select class="form-control form-control" name="sorts_4_Model"
+                                id="sorts_4_Model">
+                            <option class="text-center fw-bold">{{ sorts_4_f }}</option>
+                            <option class="text-center">area</option>
+                            <option class="text-center">cluster</option>
+                            <option class="text-center">cluster name</option>
+                            <option class="text-center">keyword</option>
+                            <option class="text-center">count</option>
+                            <option class="text-center">x</option>
+                            <option class="text-center">y</option>
+                            <option class="text-center">color</option>
+                        </select>
                     </div>
 
                 </div>
+
+                <br>
+
+                <div class="row">
+                    <div class="col-lg-2 text-center align-self-end">
+                        <select class="form-control form-control" name="ASC_DESC_1_Model"
+                                id="ASC_DESC_1_Model">
+                            <option class="text-center fw-bold"> {{ sorts_AD_1_f }} </option>
+                            <option class="text-center">возрастанию</option>
+                            <option class="text-center">убыванию</option>
+                        </select>
+                    </div>
+
+                    <div class="col-lg-2 text-center align-self-end">
+                        <select class="form-control form-control" name="ASC_DESC_2_Model"
+                                id="ASC_DESC_2_Model">
+                            <option class="text-center fw-bold"> {{ sorts_AD_2_f }} </option>
+                            <option class="text-center">возрастанию</option>
+                            <option class="text-center">убыванию</option>
+                        </select>
+                    </div>
+
+                    <div class="col-lg-2 text-center align-self-end">
+                        <select class="form-control form-control" name="ASC_DESC_3_Model"
+                                id="ASC_DESC_3_Model">
+                            <option class="text-center fw-bold"> {{ sorts_AD_3_f }} </option>
+                            <option class="text-center">возрастанию</option>
+                            <option class="text-center">убыванию</option>
+                        </select>
+                    </div>
+
+                    <div class="col-lg-2 text-center align-self-end">
+                        <select class="form-control form-control" name="ASC_DESC_4_Model"
+                                id="ASC_DESC_4_Model">
+                            <option class="text-center fw-bold"> {{ sorts_AD_4_f }} </option>
+                            <option class="text-center">возрастанию</option>
+                            <option class="text-center">убыванию</option>
+                        </select>
+                    </div>
+
+                    <div class="col align-self-end">
+                        <button type="submit" class="btn btn-primary" >Обновить</button>
+                    </div>
+
+                </div>
+
             </form>
         </div>
 
