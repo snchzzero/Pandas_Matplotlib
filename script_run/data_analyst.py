@@ -7,6 +7,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 import csv
 import pandas as pd
 import time
+import math
 from datetime import datetime
 
 def now():
@@ -68,13 +69,13 @@ def analyst_data():
     data = pd.read_csv('csv_data.csv', encoding="Windows-1251")  # encoding для чтения русских символов
     data.insert(8, 'color', None)  # добавляем столбец color
     d1 = dict()  # для предварительной записи color, keyword, что бы избежать повторов
-    data['count'] = pd.to_numeric(arg=data['count'], errors='ignore', downcast='unsigned')  # преобразования аргумента(string) в числовую форму
+    data['count'] = pd.to_numeric(arg=data['count'], errors='coerce', downcast='integer')  # преобразования аргумента(string) в числовую форму
 
     # добавляем в колонку color цвет в соответствии с условием
     # удаляем повтор keyword в одной области area
     for row in data.itertuples():  # вывести кортеж строки row
         # если значение count не число, то удаляем строку
-        if ((type(row[6]) == str and (row[6] == '-') or (row[6] == 'N\\A'))) or type(row[6]) == float:
+        if ((type(row[6]) == str and (row[6] == '-') or (row[6] == 'N\\A') or (math.isnan(row[6])))):  # isnan проверяет, что бы count != nan
             data = data.drop(index=row[0])
             continue
         elif row[1] not in d1:  # если area нет в словаре, то добавляем его и его первый кластер + цвет
