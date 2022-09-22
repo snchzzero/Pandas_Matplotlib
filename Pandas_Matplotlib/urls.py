@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from pnds_mtpltlb import views
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='gohome'),

@@ -1,6 +1,5 @@
 # для google_API
 import random
-
 import httplib2
 from googleapiclient import discovery  # вместо apiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials

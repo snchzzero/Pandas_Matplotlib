@@ -19,7 +19,7 @@ def now():
 
 # чтение исходных данных Google Sheets
 def google_API_get():
-    # не забываем расшарить сам документ в гугл таблицах, добавить пользователя из файлы creds.json
+    # не забываем расшарить сам документ в гугл таблицах, добавить пользователя из файла creds.json
     #"client_email": "acountsnchzzero@radiant-planet-353422.iam.gserviceaccount.com",
 
     # подключение API
@@ -72,7 +72,8 @@ def analyst_data():
     # Сброс ограничений на количество символов в записи
     pd.set_option('display.max_colwidth', None)
 
-    data = pd.read_csv('pnds_mtpltlb/csv_data.csv', encoding="Windows-1251")  # encoding для чтения русских символов
+    data = pd.read_csv('pnds_mtpltlb/csv_data.csv')  # encoding для чтения русских символов
+    #data = pd.read_csv('pnds_mtpltlb/csv_data.csv', encoding="Windows-1251")  # encoding для чтения русских символов
     #data = pd.read_csv('csv_data.csv', encoding="Windows-1251")  # encoding для чтения русских символов
     data.insert(8, 'color', None)  # добавляем столбец color
     d1 = dict()  # для предварительной записи color, keyword, что бы избежать повторов
@@ -335,15 +336,12 @@ def selecet():
             cursor.execute("""
             SELECT id, area, cluster, cluster_name, keyword, count, x, y, color FROM pnds_mtpltlb""")
             rows = cursor.fetchall()
-            for row in rows:
-                a = row
-                print(row)
-                for r in row:
-                    print(row[8])
-                    print(r)
+            name = "web таблица успешно загружена"
+            return rows, name
 
-    except ValueError as ex:
-        print(ex)
+    except ValueError as name:
+        rows = None
+        return rows, str(name)
     finally:
         if connection:  # закрываем подключение к БД
             connection.close()

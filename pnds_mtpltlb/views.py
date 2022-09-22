@@ -2,10 +2,14 @@ from django.shortcuts import render, redirect
 from pnds_mtpltlb.forms import Form_Action, Form_Sort
 from datetime import datetime
 import psycopg2
-from pnds_mtpltlb.data_analyst import db_insert_data, google_API_send, sort_tab, analyst_data
+import os
+from pnds_mtpltlb.data_analyst import db_insert_data, google_API_send, sort_tab, analyst_data, selecet
 from pnds_mtpltlb.config_db import host, user, password, db_name
 from pnds_mtpltlb.data_plot import build_plot
-import os
+from .tasks import celery_google_API_send, celery_analyst_data_db_insert_data, celery_sort_tab_db_insert_data, \
+    celery_selecet, celery_sort_tab_db_insert_data_selecet
+
+
 
 global name
 name = 'home'
@@ -37,8 +41,9 @@ def home(request):
 
         if analysis_f == "analysis":
             try:
-                analyst_data()
-                db_insert_data()
+                celery_analyst_data_db_insert_data.delay()
+                #analyst_data()
+                #db_insert_data()
                 name = "импорт входных данных Google Sheets, анализ данных - завершен"
                 return render(request, 'pnds_mtpltlb/home.html',
                             {'form': Form_Action(), 'name': name, 'now': time()})
@@ -49,7 +54,8 @@ def home(request):
             return redirect('show_web_tab')
         elif send_data_gs_f == "send_data":
             try:
-                google_API_send()
+                celery_google_API_send.delay()
+                #google_API_send()
                 name = 'данные успешно отправлены в Google Sheets'
                 return render(request, 'pnds_mtpltlb/home.html',
                               {'form': Form_Action(), 'name': name, 'now': time()})
@@ -78,43 +84,77 @@ def show_web_tab(request):
     global rows
 
     if request.method == 'GET':
-        name = "web таблица успешно загружена"
-        try:
-            connection = psycopg2.connect(
-                host=host,
-                user=user,
-                password=password,
-                database=db_name)
-            connection.autocommit = True  # что бы не писать после каждого запроса коммит
+        #name = "web таблица успешно загружена"
+        #rows = cursor.fetchall()
+        sorts_1_f = 'area'
+        sorts_AD_1_f = "возрастанию"
+        sorts_2_f = 'cluster'
+        sorts_AD_2_f = "возрастанию"
+        sorts_3_f = 'cluster name'
+        sorts_AD_3_f = "возрастанию"
+        sorts_4_f = 'count'
+        sorts_AD_4_f = "убыванию"
 
-            with connection.cursor() as cursor:
-                cursor.execute("""
-                SELECT id, area, cluster, cluster_name, keyword, count, x, y, color FROM pnds_mtpltlb""")
-                rows = cursor.fetchall()
-                sorts_1_f = 'area'
-                sorts_AD_1_f = "возрастанию"
-                sorts_2_f = 'cluster'
-                sorts_AD_2_f = "возрастанию"
-                sorts_3_f = 'cluster name'
-                sorts_AD_3_f = "возрастанию"
-                sorts_4_f = 'count'
-                sorts_AD_4_f = "убыванию"
-
-                return render(request, 'pnds_mtpltlb/web_tab.html', {'form': Form_Action(),'name': name, 'now': time(),
-                                                                     'rows': rows,
-                                                                     'sorts_1_f': sorts_1_f,
-                                                                     'sorts_AD_1_f': sorts_AD_1_f,
-                                                                     'sorts_2_f': sorts_2_f,
-                                                                     'sorts_AD_2_f': sorts_AD_2_f,
-                                                                     'sorts_3_f': sorts_3_f,
-                                                                     'sorts_AD_3_f': sorts_AD_3_f,
-                                                                     'sorts_4_f': sorts_4_f,
-                                                                     'sorts_AD_4_f': sorts_AD_4_f})
-        except ValueError:
-            return render(request, 'pnds_mtpltlb/web_tab.html', {'name': 'Error while working with PostgreSQL'})
-        finally:
-            if connection:  # закрываем подключение к БД
-                connection.close()
+        # если возвращается после выполнения задачи celery 2 параметра (return), то они представлены в виде списка
+        # что бы получить данные из return нужно у задачи celery применить метод get()
+        rows, name = celery_selecet.delay().get()
+        if rows != None:
+            return render(request, 'pnds_mtpltlb/web_tab.html', {'form': Form_Action(), 'name': name, 'now': time(),
+                                                                         'rows': rows,
+                                                                         'sorts_1_f': sorts_1_f,
+                                                                         'sorts_AD_1_f': sorts_AD_1_f,
+                                                                         'sorts_2_f': sorts_2_f,
+                                                                         'sorts_AD_2_f': sorts_AD_2_f,
+                                                                         'sorts_3_f': sorts_3_f,
+                                                                         'sorts_AD_3_f': sorts_AD_3_f,
+                                                                         'sorts_4_f': sorts_4_f,
+                                                                         'sorts_AD_4_f': sorts_AD_4_f})
+        else:
+            return render(request, 'pnds_mtpltlb/web_tab.html', {'form': Form_Action(), 'name': name, 'now': time(),
+                                                                         'sorts_1_f': sorts_1_f,
+                                                                         'sorts_AD_1_f': sorts_AD_1_f,
+                                                                         'sorts_2_f': sorts_2_f,
+                                                                         'sorts_AD_2_f': sorts_AD_2_f,
+                                                                         'sorts_3_f': sorts_3_f,
+                                                                         'sorts_AD_3_f': sorts_AD_3_f,
+                                                                         'sorts_4_f': sorts_4_f,
+                                                                         'sorts_AD_4_f': sorts_AD_4_f})
+        # try:
+        #     connection = psycopg2.connect(
+        #         host=host,
+        #         user=user,
+        #         password=password,
+        #         database=db_name)
+        #     connection.autocommit = True  # что бы не писать после каждого запроса коммит
+        #
+        #     with connection.cursor() as cursor:
+        #         cursor.execute("""
+        #         SELECT id, area, cluster, cluster_name, keyword, count, x, y, color FROM pnds_mtpltlb""")  # if local db: FROM pnds_mtpltlb
+        #         rows = cursor.fetchall()
+        #         sorts_1_f = 'area'
+        #         sorts_AD_1_f = "возрастанию"
+        #         sorts_2_f = 'cluster'
+        #         sorts_AD_2_f = "возрастанию"
+        #         sorts_3_f = 'cluster name'
+        #         sorts_AD_3_f = "возрастанию"
+        #         sorts_4_f = 'count'
+        #         sorts_AD_4_f = "убыванию"
+        #
+        #         return render(request, 'pnds_mtpltlb/web_tab.html', {'form': Form_Action(),'name': name, 'now': time(),
+        #                                                              'rows': rows,
+        #                                                              'sorts_1_f': sorts_1_f,
+        #                                                              'sorts_AD_1_f': sorts_AD_1_f,
+        #                                                              'sorts_2_f': sorts_2_f,
+        #                                                              'sorts_AD_2_f': sorts_AD_2_f,
+        #                                                              'sorts_3_f': sorts_3_f,
+        #                                                              'sorts_AD_3_f': sorts_AD_3_f,
+        #                                                              'sorts_4_f': sorts_4_f,
+        #                                                              'sorts_AD_4_f': sorts_AD_4_f})
+        # except ValueError:
+        #     return render(request, 'pnds_mtpltlb/web_tab.html', {'name': 'Error while working with PostgreSQL'})
+        # finally:
+        #     if connection:  # закрываем подключение к БД
+        #         connection.close()
 
     elif request.method == 'POST':
         form = Form_Action(request.POST)
@@ -157,8 +197,7 @@ def show_web_tab(request):
         print(sorts_1_f, sorts_AD_1_f, sorts_2_f, sorts_AD_2_f, sorts_3_f, sorts_AD_3_f, sorts_4_f, sorts_AD_4_f, Sort_Default)
         if analysis_f == "analysis":
             try:
-                analyst_data()
-                db_insert_data()
+                celery_analyst_data_db_insert_data.delay()
                 name = "импорт входных данных Google Sheets, анализ данных - завершен"
                 return render(request, 'pnds_mtpltlb/web_tab.html', {'form': Form_Action(), 'name': name,
                                                                      'now': time(), 'rows': rows,
@@ -181,7 +220,7 @@ def show_web_tab(request):
             return redirect('show_web_tab')
         elif send_data_gs_f == "send_data":
             try:
-                google_API_send()
+                celery_google_API_send.delay()
                 name = 'данные успешно отправлены в Google Sheets'
                 return render(request, 'pnds_mtpltlb/web_tab.html',
                               {'form': Form_Action(), 'form2': Form_Sort(), 'name': name, 'now': time(), 'rows': rows,
@@ -229,43 +268,20 @@ def show_web_tab(request):
                 name = "применена сортировка по умолчанию"
             else:
                 name = "применена сортировка пользователя"
-            try:
-                print('Пытаемся подключиться к базе')
-                d1 = {"возрастанию": True, "убыванию": False}
-                print(f'{sorts_1_f} {d1[sorts_AD_1_f]} \n{sorts_2_f} {d1[sorts_AD_2_f]} \n{sorts_3_f} {d1[sorts_AD_3_f]} \n{sorts_4_f} {d1[sorts_AD_4_f]}')
-                print('Пытаемся применить сортировку')
-                sort_tab(column_1=("_").join(sorts_1_f.split()), column_2=("_").join(sorts_2_f.split()),
-                         column_3=("_").join(sorts_3_f.split()), column_4=("_").join(sorts_4_f.split()),
-                         asc_1=d1[sorts_AD_1_f], asc_2=d1[sorts_AD_2_f], asc_3=d1[sorts_AD_3_f],
-                         asc_4=d1[sorts_AD_4_f])
-                db_insert_data()
 
-                connection = psycopg2.connect(
-                    host=host,
-                    user=user,
-                    password=password,
-                    database=db_name)
-                connection.autocommit = True  # что бы не писать после каждого запроса коммит
+            print('Пытаемся подключиться к базе')
+            d1 = {"возрастанию": True, "убыванию": False}
+            print(f'{sorts_1_f} {d1[sorts_AD_1_f]} \n{sorts_2_f} {d1[sorts_AD_2_f]} \n{sorts_3_f} {d1[sorts_AD_3_f]} \n{sorts_4_f} {d1[sorts_AD_4_f]}')
+            print('Пытаемся применить сортировку')
+            rows, name2 = celery_sort_tab_db_insert_data_selecet.delay(
+                column_1=("_").join(sorts_1_f.split()), column_2=("_").join(sorts_2_f.split()),
+                column_3=("_").join(sorts_3_f.split()), column_4=("_").join(sorts_4_f.split()),
+                asc_1=d1[sorts_AD_1_f], asc_2=d1[sorts_AD_2_f], asc_3=d1[sorts_AD_3_f],
+                asc_4=d1[sorts_AD_4_f]).get()
 
-                with connection.cursor() as cursor:
-                    cursor.execute("""
-                    SELECT id, area, cluster, cluster_name, keyword, count, x, y, color FROM pnds_mtpltlb""")
-                    rows = cursor.fetchall()
-
-                    return render(request, 'pnds_mtpltlb/web_tab.html', {'form': Form_Action(),
-                                                                         'name': name, 'now': time(), 'rows': rows,
-                                                                         'sorts_1_f': sorts_1_f,
-                                                                         'sorts_AD_1_f': sorts_AD_1_f,
-                                                                         'sorts_2_f': sorts_2_f,
-                                                                         'sorts_AD_2_f': sorts_AD_2_f,
-                                                                         'sorts_3_f': sorts_3_f,
-                                                                         'sorts_AD_3_f': sorts_AD_3_f,
-                                                                         'sorts_4_f': sorts_4_f,
-                                                                         'sorts_AD_4_f': sorts_AD_4_f
-                                                                         })
-            except ValueError as name:
+            if rows != None:
                 return render(request, 'pnds_mtpltlb/web_tab.html', {'form': Form_Action(),
-                                                                     'name': str(name), 'now': time(), 'rows': rows,
+                                                                     'name': name, 'now': time(), 'rows': rows,
                                                                      'sorts_1_f': sorts_1_f,
                                                                      'sorts_AD_1_f': sorts_AD_1_f,
                                                                      'sorts_2_f': sorts_2_f,
@@ -275,52 +291,35 @@ def show_web_tab(request):
                                                                      'sorts_4_f': sorts_4_f,
                                                                      'sorts_AD_4_f': sorts_AD_4_f
                                                                      })
-            finally:
-                if connection:  # закрываем подключение к БД
-                    connection.close()
-
+            else:
+                return render(request, 'pnds_mtpltlb/web_tab.html', {'form': Form_Action(),
+                                                                     'name': name2, 'now': time(),
+                                                                     'sorts_1_f': sorts_1_f,
+                                                                     'sorts_AD_1_f': sorts_AD_1_f,
+                                                                     'sorts_2_f': sorts_2_f,
+                                                                     'sorts_AD_2_f': sorts_AD_2_f,
+                                                                     'sorts_3_f': sorts_3_f,
+                                                                     'sorts_AD_3_f': sorts_AD_3_f,
+                                                                     'sorts_4_f': sorts_4_f,
+                                                                     'sorts_AD_4_f': sorts_AD_4_f
+                                                                     })
         # кнопка применить сортировку по умолчанию
         elif Sort_Default == 'применить':
             print('новая кнопка сортировка по умолчанию')
             name = "применена сортировка по умолчанию"
-            try:
-                sort_tab()
-                db_insert_data()
-                connection = psycopg2.connect(
-                    host=host,
-                    user=user,
-                    password=password,
-                    database=db_name)
-                connection.autocommit = True  # что бы не писать после каждого запроса коммит
+            rows, name2 = celery_sort_tab_db_insert_data_selecet.delay().get()
 
-                with connection.cursor() as cursor:
-                    cursor.execute("""
-                                SELECT id, area, cluster, cluster_name, keyword, count, x, y, color FROM pnds_mtpltlb""")
-                    rows = cursor.fetchall()
-
-                    sorts_1_f = 'area'
-                    sorts_AD_1_f = "возрастанию"
-                    sorts_2_f = 'cluster'
-                    sorts_AD_2_f = "возрастанию"
-                    sorts_3_f = 'cluster name'
-                    sorts_AD_3_f = "возрастанию"
-                    sorts_4_f = 'count'
-                    sorts_AD_4_f = "убыванию"
-
-                    return render(request, 'pnds_mtpltlb/web_tab.html', {'form': Form_Action(),
-                                                                         'name': name, 'now': time(), 'rows': rows,
-                                                                         'sorts_1_f': sorts_1_f,
-                                                                         'sorts_AD_1_f': sorts_AD_1_f,
-                                                                         'sorts_2_f': sorts_2_f,
-                                                                         'sorts_AD_2_f': sorts_AD_2_f,
-                                                                         'sorts_3_f': sorts_3_f,
-                                                                         'sorts_AD_3_f': sorts_AD_3_f,
-                                                                         'sorts_4_f': sorts_4_f,
-                                                                         'sorts_AD_4_f': sorts_AD_4_f
-                                                                         })
-            except ValueError as name:
+            sorts_1_f = 'area'
+            sorts_AD_1_f = "возрастанию"
+            sorts_2_f = 'cluster'
+            sorts_AD_2_f = "возрастанию"
+            sorts_3_f = 'cluster name'
+            sorts_AD_3_f = "возрастанию"
+            sorts_4_f = 'count'
+            sorts_AD_4_f = "убыванию"
+            if rows != None:
                 return render(request, 'pnds_mtpltlb/web_tab.html', {'form': Form_Action(),
-                                                                     'name': str(name), 'now': time(), 'rows': rows,
+                                                                     'name': name, 'now': time(), 'rows': rows,
                                                                      'sorts_1_f': sorts_1_f,
                                                                      'sorts_AD_1_f': sorts_AD_1_f,
                                                                      'sorts_2_f': sorts_2_f,
@@ -330,23 +329,83 @@ def show_web_tab(request):
                                                                      'sorts_4_f': sorts_4_f,
                                                                      'sorts_AD_4_f': sorts_AD_4_f
                                                                      })
-            finally:
-                if connection:  # закрываем подключение к БД
-                    connection.close()
+            else:
+                return render(request, 'pnds_mtpltlb/web_tab.html', {'form': Form_Action(),
+                                                                     'name': name2, 'now': time(),
+                                                                     'sorts_1_f': sorts_1_f,
+                                                                     'sorts_AD_1_f': sorts_AD_1_f,
+                                                                     'sorts_2_f': sorts_2_f,
+                                                                     'sorts_AD_2_f': sorts_AD_2_f,
+                                                                     'sorts_3_f': sorts_3_f,
+                                                                     'sorts_AD_3_f': sorts_AD_3_f,
+                                                                     'sorts_4_f': sorts_4_f,
+                                                                     'sorts_AD_4_f': sorts_AD_4_f
+                                                                     })
 
-        else:
-            name = "ошибка"
-            return render(request, 'pnds_mtpltlb/web_tab.html', {'form': Form_Action(),
-                                                                 'name': name, 'now': time(), 'rows': rows,
-                                                                 'sorts_1_f': sorts_1_f,
-                                                                 'sorts_AD_1_f': sorts_AD_1_f,
-                                                                 'sorts_2_f': sorts_2_f,
-                                                                 'sorts_AD_2_f': sorts_AD_2_f,
-                                                                 'sorts_3_f': sorts_3_f,
-                                                                 'sorts_AD_3_f': sorts_AD_3_f,
-                                                                 'sorts_4_f': sorts_4_f,
-                                                                 'sorts_AD_4_f': sorts_AD_4_f
-                                                                 })
+            # try:
+            #     sort_tab()
+            #     db_insert_data()
+            #     connection = psycopg2.connect(
+            #         host=host,
+            #         user=user,
+            #         password=password,
+            #         database=db_name)
+            #     connection.autocommit = True  # что бы не писать после каждого запроса коммит
+            #
+            #     with connection.cursor() as cursor:
+            #         cursor.execute("""
+            #                     SELECT id, area, cluster, cluster_name, keyword, count, x, y, color FROM pnds_mtpltlb""")
+            #         rows = cursor.fetchall()
+            #
+            #         sorts_1_f = 'area'
+            #         sorts_AD_1_f = "возрастанию"
+            #         sorts_2_f = 'cluster'
+            #         sorts_AD_2_f = "возрастанию"
+            #         sorts_3_f = 'cluster name'
+            #         sorts_AD_3_f = "возрастанию"
+            #         sorts_4_f = 'count'
+            #         sorts_AD_4_f = "убыванию"
+
+                    # return render(request, 'pnds_mtpltlb/web_tab.html', {'form': Form_Action(),
+                    #                                                      'name': name, 'now': time(), 'rows': rows,
+                    #                                                      'sorts_1_f': sorts_1_f,
+                    #                                                      'sorts_AD_1_f': sorts_AD_1_f,
+                    #                                                      'sorts_2_f': sorts_2_f,
+                    #                                                      'sorts_AD_2_f': sorts_AD_2_f,
+                    #                                                      'sorts_3_f': sorts_3_f,
+                    #                                                      'sorts_AD_3_f': sorts_AD_3_f,
+                    #                                                      'sorts_4_f': sorts_4_f,
+                    #                                                      'sorts_AD_4_f': sorts_AD_4_f
+                    #                                                      })
+        #     except ValueError as name:
+        #         return render(request, 'pnds_mtpltlb/web_tab.html', {'form': Form_Action(),
+        #                                                              'name': str(name), 'now': time(), 'rows': rows,
+        #                                                              'sorts_1_f': sorts_1_f,
+        #                                                              'sorts_AD_1_f': sorts_AD_1_f,
+        #                                                              'sorts_2_f': sorts_2_f,
+        #                                                              'sorts_AD_2_f': sorts_AD_2_f,
+        #                                                              'sorts_3_f': sorts_3_f,
+        #                                                              'sorts_AD_3_f': sorts_AD_3_f,
+        #                                                              'sorts_4_f': sorts_4_f,
+        #                                                              'sorts_AD_4_f': sorts_AD_4_f
+        #                                                              })
+        #     finally:
+        #         if connection:  # закрываем подключение к БД
+        #             connection.close()
+        #
+        # else:
+        #     name = "ошибка"
+        #     return render(request, 'pnds_mtpltlb/web_tab.html', {'form': Form_Action(),
+        #                                                          'name': name, 'now': time(), 'rows': rows,
+        #                                                          'sorts_1_f': sorts_1_f,
+        #                                                          'sorts_AD_1_f': sorts_AD_1_f,
+        #                                                          'sorts_2_f': sorts_2_f,
+        #                                                          'sorts_AD_2_f': sorts_AD_2_f,
+        #                                                          'sorts_3_f': sorts_3_f,
+        #                                                          'sorts_AD_3_f': sorts_AD_3_f,
+        #                                                          'sorts_4_f': sorts_4_f,
+        #                                                          'sorts_AD_4_f': sorts_AD_4_f
+        #                                                          })
 
 def send_data(request):
     pass

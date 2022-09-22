@@ -82,16 +82,29 @@ WSGI_APPLICATION = 'Pandas_Matplotlib.wsgi.application'
 # }
 
 ### for PostgreSQL local
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'Pandas_Matplotlib',
+#         'USER': 'postgres',
+#         'PASSWORD': '123',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
+
+### for Docker
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'Pandas_Matplotlib',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': '123',
-        'HOST': 'localhost',
+        'HOST': 'pg_db',
         'PORT': '5432',
+        'PASSWORD': '123'
     }
-}
+ }
+
 
 
 # Password validation
@@ -120,10 +133,12 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
+
 USE_I18N = True
 
-USE_TZ = True
-
+#USE_TZ = True
+USE_TZ = False  # по умолчанию тру
+TIME_ZONE = 'Europe/Moscow'  # доп. строчка
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
@@ -134,3 +149,18 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#REDIS related settings
+#REDIS_HOST = '0.0.0.0'
+#REDIS_HOST = '172.21.0.3'
+#REDIS_HOST = '127.0.0.1'
+#redis://app_redis:6379/0
+
+REDIS_HOST = 'app_redis'  # название контейнера в docker
+REDIS_PORT = '6379'
+CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout':3600}
+CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
