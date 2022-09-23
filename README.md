@@ -287,13 +287,13 @@ docker-compose up
 
 <a name="Веб_интерфейс">Web сервис на Django - Скриншоты</a>
 
-![Screenshot](pic_1.png)
+![Screenshot](pic1.png)
 
-![Screenshot](pic_2.png)
+![Screenshot](pic2.png)
 
-![Screenshot](pic_3.png)
+![Screenshot](pic3.png)
 
-![Screenshot](pic_4.png)
+![Screenshot](pic4.png)
 
 [оглавление](#оглавление)
 ______
