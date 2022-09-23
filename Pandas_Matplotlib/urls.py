@@ -21,9 +21,6 @@ from pnds_mtpltlb import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='gohome'),
-    path('analysis/', views.analysis, name='analysis'),
     path('show_web_tab/', views.show_web_tab, name='show_web_tab'),
-    path('send_data/', views.send_data, name='send_data'),
-    path('create_plot/', views.create_plot, name='create_plot'),
     path('show_plot/', views.show_plot, name='show_plot'),
 ]

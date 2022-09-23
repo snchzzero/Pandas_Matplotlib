@@ -3,8 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pnds_mtpltlb.data_analyst import get_data
 
-
-
 def plot(data=None, file_name="area", copy=""):
 
     plt.figure(figsize=(9, 7))  #1500х1500px
@@ -52,9 +50,6 @@ def plot(data=None, file_name="area", copy=""):
 
     label_point(data.x, data.y, data.keyword, plt.gca())
     ax.figure.savefig(f"pnds_mtpltlb/static/plot/{file_name}{copy}.png")
-
-
-
 
 def build_plot():
     data = get_data()
