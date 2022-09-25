@@ -153,7 +153,7 @@ def show_web_tab(request):
                 celery_analyst_data_db_insert_data.delay()
                 name = "импорт входных данных Google Sheets, анализ данных - завершен"
                 return render(request, 'pnds_mtpltlb/web_tab.html', {'form': Form_Action(), 'name': name,
-                                                                     'now': time(), 'rows': rows,
+                                                                     'now': time(),
                                                                      'sorts_1_f': sorts_1_f, 'sorts_AD_1_f': sorts_AD_1_f,
                                                                      'sorts_2_f': sorts_2_f, 'sorts_AD_2_f': sorts_AD_2_f,
                                                                      'sorts_3_f': sorts_3_f, 'sorts_AD_3_f': sorts_AD_3_f,
