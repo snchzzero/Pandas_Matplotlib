@@ -324,7 +324,7 @@ def show_web_tab(request):
 def show_plot(request):
     form = Form_Action(request.POST)
     if request.method == 'GET':
-        if len(os.listdir('pnds_mtpltlb/static/plot')) > 0:
+        if len(os.listdir('pnds_mtpltlb/static/plot')) > 1:
             name = "show plot"
             return render(request, 'pnds_mtpltlb/show_plot.html', {'form': Form_Action(), 'name': name, 'now': time()})
         else:
